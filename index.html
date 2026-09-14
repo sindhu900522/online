@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StrideWear — Home</title>
+<link rel="stylesheet" href="css/style.css" />
+
+<!--
+  ================================================================
+  ADOBE LAUNCH EMBED CODE GOES HERE (before analytics.js if your
+  Launch property does NOT bundle Web SDK, or after if it does).
+  Paste your environment's embed snippet, e.g.:
+
+  <script src="https://assets.adobedtm.com/xxxxxxxx/xxxxxxxx/launch-xxxxxxxxxxxx.min.js" async></script>
+
+  adobeDataLayer must exist before Launch loads, which is why
+  analytics.js (which initializes it) is loaded first below.
+  ================================================================
+-->
+</head>
+<body data-page-type="home">
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo">Stride<span>Wear</span></div>
+    <nav class="main-nav">
+      <a href="index.html" class="active">Home</a>
+      <a href="product.html">Products</a>
+      <a href="cart.html">Cart</a>
+    </nav>
+    <div class="header-actions">
+      <div class="search-box">
+        <input type="text" placeholder="Search products..." data-search-input />
+      </div>
+      <a href="cart.html" class="cart-link" data-cta="cart-icon" data-cta-location="header">
+        🛒<span class="cart-badge" data-cart-count>0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Gear built for your everyday stride</h1>
+  <p>Shoes, outerwear &amp; accessories — new drops every week.</p>
+  <a href="#shop" class="btn btn-primary" data-cta="shop-now" data-cta-location="hero">Shop Now</a>
+</section>
+
+<main class="container" id="shop">
+  <div class="section-title">
+    <h2>Featured Products</h2>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-chip active" data-filter="all">All</button>
+    <button class="filter-chip" data-filter="shoes">Shoes</button>
+    <button class="filter-chip" data-filter="outerwear">Outerwear</button>
+    <button class="filter-chip" data-filter="accessories">Accessories</button>
+    <button class="filter-chip" data-filter="fitness">Fitness</button>
+  </div>
+
+  <div class="product-grid" id="productGrid"></div>
+</main>
+
+<section class="newsletter">
+  <h2>Get 10% off your first order</h2>
+  <p>Sign up for restock alerts and exclusive drops.</p>
+  <form id="newsletterForm">
+    <input type="email" required placeholder="you@example.com" />
+    <button type="submit" class="btn btn-primary" data-cta="newsletter-submit" data-cta-location="footer-signup">Subscribe</button>
+  </form>
+</section>
+
+<footer class="site-footer">
+  <p>© 2026 StrideWear Demo Store — built for Adobe Analytics / Target / Launch testing.</p>
+  <div class="social-row">
+    <a href="#" data-cta="social" data-cta-location="footer">Instagram</a>
+    <a href="#" data-cta="social" data-cta-location="footer">TikTok</a>
+    <a href="#" data-cta="social" data-cta-location="footer">X</a>
+  </div>
+</footer>
+
+<!-- Quick View Modal -->
+<div class="modal-overlay" id="quickViewModal">
+  <div class="modal-box">
+    <button class="modal-close">&times;</button>
+    <div class="gallery-main" style="height:200px;font-size:3.5rem;" id="qvIcon"></div>
+    <h3 id="qvTitle"></h3>
+    <p class="price" id="qvPrice"></p>
+    <a href="product.html" class="btn btn-primary btn-block" data-cta="quickview-view-full" data-cta-location="modal">View Full Details</a>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- adobeDataLayer init + Web SDK tracking helper (must load before Launch tag) -->
+<script src="js/analytics.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
