@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StrideWear — Aero Runner Sneaker</title>
+<link rel="stylesheet" href="css/style.css" />
+
+<!-- ADOBE LAUNCH EMBED CODE GOES HERE (see index.html for notes) -->
+
+</head>
+<body data-page-type="product">
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo">Stride<span>Wear</span></div>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="product.html" class="active">Products</a>
+      <a href="cart.html">Cart</a>
+    </nav>
+    <div class="header-actions">
+      <div class="search-box">
+        <input type="text" placeholder="Search products..." data-search-input />
+      </div>
+      <a href="cart.html" class="cart-link" data-cta="cart-icon" data-cta-location="header">
+        🛒<span class="cart-badge" data-cart-count>0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="pdp-grid">
+    <div>
+      <div class="gallery-main" id="galleryMain">👟</div>
+      <div class="gallery-thumbs" id="galleryThumbs">
+        <div class="thumb active" data-icon="👟">👟</div>
+        <div class="thumb" data-icon="🥾">🥾</div>
+        <div class="thumb" data-icon="👞">👞</div>
+        <div class="thumb" data-icon="🩴">🩴</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="cat" style="color:#6b6b80;font-size:.8rem;">SHOES</div>
+      <h1 style="margin:6px 0;">Aero Runner Sneaker</h1>
+      <div class="stars">★★★★☆ <span style="color:#6b6b80;font-size:.85rem;">(128 reviews)</span></div>
+
+      <div class="price-row" style="margin-top:14px;">
+        <span class="price" style="font-size:1.4rem;">$79.99</span>
+        <span class="price-old">$99.99</span>
+      </div>
+
+      <p style="color:#6b6b80;">Lightweight everyday trainer with breathable mesh upper and responsive cushioning — built for city miles.</p>
+
+      <div class="option-group">
+        <label class="group-label">Color</label>
+        <div class="swatches" id="colorSwatches">
+          <div class="swatch active" data-color="Black">⚫</div>
+          <div class="swatch" data-color="White">⚪</div>
+          <div class="swatch" data-color="Red">🔴</div>
+          <div class="swatch" data-color="Blue">🔵</div>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label class="group-label">Size</label>
+        <div class="swatches" id="sizeSwatches">
+          <div class="swatch" data-size="7">7</div>
+          <div class="swatch active" data-size="8">8</div>
+          <div class="swatch" data-size="9">9</div>
+          <div class="swatch" data-size="10">10</div>
+          <div class="swatch" data-size="11">11</div>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label class="group-label">Quantity</label>
+        <div class="qty-stepper">
+          <button type="button" id="qtyMinus">−</button>
+          <input type="text" id="qtyInput" value="1" readonly />
+          <button type="button" id="qtyPlus">+</button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <button class="btn btn-primary" id="addToCartBtn" data-cta="add-to-cart" data-cta-location="pdp">Add to Cart</button>
+        <button class="btn btn-outline" id="wishlistBtn" data-cta="add-to-wishlist" data-cta-location="pdp">♡ Wishlist</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab-headers">
+      <button class="active" data-tab="description">Description</button>
+      <button data-tab="specs">Specifications</button>
+      <button data-tab="reviews">Reviews (128)</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-description">
+      <p>The Aero Runner is engineered for all-day comfort. A breathable engineered mesh upper keeps feet cool, while the dual-density foam midsole absorbs impact on hard city pavement. Reflective details improve visibility on early runs or late commutes.</p>
+    </div>
+    <div class="tab-panel" id="tab-specs">
+      <ul>
+        <li>Upper: Engineered mesh</li>
+        <li>Midsole: Dual-density EVA foam</li>
+        <li>Outsole: Rubber traction pattern</li>
+        <li>Weight: 265g (size 9)</li>
+      </ul>
+    </div>
+    <div class="tab-panel" id="tab-reviews">
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <strong>Priya S.</strong> — "Incredibly comfortable for daily wear, true to size."
+      </div>
+      <div class="review">
+        <div class="stars">★★★★☆</div>
+        <strong>Arun K.</strong> — "Great cushioning, wish there were more colors."
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <strong>Meera R.</strong> — "My go-to sneaker now, ordered a second pair."
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:50px;">
+    <h2>You may also like</h2>
+  </div>
+  <div class="product-grid" id="relatedGrid"></div>
+</main>
+
+<footer class="site-footer">
+  <p>© 2026 StrideWear Demo Store — built for Adobe Analytics / Target / Launch testing.</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/analytics.js"></script>
+<script src="js/app.js"></script>
+<script>
+  var currentProduct = {
+    id: "sku-101",
+    name: "Aero Runner Sneaker",
+    price: 79.99,
+    color: "Black",
+    size: "8"
+  };
+
+  // Product view event (PDP-specific, in addition to generic page view)
+  track("product view", {
+    productId: currentProduct.id,
+    productName: currentProduct.name,
+    price: currentProduct.price,
+    category: "shoes"
+  });
+
+  // Gallery thumb switching
+  document.querySelectorAll("#galleryThumbs .thumb").forEach(function (thumb) {
+    thumb.addEventListener("click", function () {
+      document.querySelectorAll("#galleryThumbs .thumb").forEach(function (t) { t.classList.remove("active"); });
+      thumb.classList.add("active");
+      document.getElementById("galleryMain").textContent = thumb.getAttribute("data-icon");
+      track("gallery image change", { productId: currentProduct.id, image: thumb.getAttribute("data-icon") });
+    });
+  });
+
+  // Color swatch selection
+  document.querySelectorAll("#colorSwatches .swatch").forEach(function (sw) {
+    sw.addEventListener("click", function () {
+      document.querySelectorAll("#colorSwatches .swatch").forEach(function (s) { s.classList.remove("active"); });
+      sw.classList.add("active");
+      currentProduct.color = sw.getAttribute("data-color");
+      track("product option select", { productId: currentProduct.id, optionType: "color", value: currentProduct.color });
+    });
+  });
+
+  // Size swatch selection
+  document.querySelectorAll("#sizeSwatches .swatch").forEach(function (sw) {
+    sw.addEventListener("click", function () {
+      document.querySelectorAll("#sizeSwatches .swatch").forEach(function (s) { s.classList.remove("active"); });
+      sw.classList.add("active");
+      currentProduct.size = sw.getAttribute("data-size");
+      track("product option select", { productId: currentProduct.id, optionType: "size", value: currentProduct.size });
+    });
+  });
+
+  // Quantity stepper
+  var qtyInput = document.getElementById("qtyInput");
+  document.getElementById("qtyMinus").addEventListener("click", function () {
+    var v = Math.max(1, parseInt(qtyInput.value, 10) - 1);
+    qtyInput.value = v;
+    track("quantity change", { productId: currentProduct.id, qty: v });
+  });
+  document.getElementById("qtyPlus").addEventListener("click", function () {
+    var v = parseInt(qtyInput.value, 10) + 1;
+    qtyInput.value = v;
+    track("quantity change", { productId: currentProduct.id, qty: v });
+  });
+
+  // Add to cart
+  document.getElementById("addToCartBtn").addEventListener("click", function () {
+    Cart.add({
+      id: currentProduct.id,
+      name: currentProduct.name + " (" + currentProduct.color + ")",
+      price: currentProduct.price,
+      qty: parseInt(qtyInput.value, 10),
+      size: currentProduct.size
+    });
+    showToast("Added to cart!");
+  });
+
+  // Wishlist
+  document.getElementById("wishlistBtn").addEventListener("click", function (e) {
+    e.target.textContent = e.target.textContent.indexOf("♥") > -1 ? "♡ Wishlist" : "♥ Wishlisted";
+    track("add to wishlist", { productId: currentProduct.id });
+  });
+
+  // Tabs
+  document.querySelectorAll(".tab-headers button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll(".tab-headers button").forEach(function (b) { b.classList.remove("active"); });
+      document.querySelectorAll(".tab-panel").forEach(function (p) { p.classList.remove("active"); });
+      btn.classList.add("active");
+      document.getElementById("tab-" + btn.getAttribute("data-tab")).classList.add("active");
+      track("tab view", { productId: currentProduct.id, tab: btn.getAttribute("data-tab") });
+    });
+  });
+
+  // Related products grid (reuse renderProductGrid but into a different container)
+  (function renderRelated() {
+    var grid = document.getElementById("relatedGrid");
+    var related = PRODUCTS.filter(function (p) { return p.id !== currentProduct.id; }).slice(0, 4);
+    grid.innerHTML = related.map(function (p) {
+      return (
+        '<div class="product-card" data-id="' + p.id + '">' +
+          '<div class="product-thumb">' + p.icon + '</div>' +
+          '<div class="product-info">' +
+            '<div class="cat">' + p.cat + '</div>' +
+            '<h3>' + p.name + '</h3>' +
+            '<div class="price-row"><span class="price">' + money(p.price) + '</span></div>' +
+            '<button class="btn btn-primary btn-sm btn-block" data-quick-add="' + p.id + '">Add to Cart</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join("");
+    grid.querySelectorAll("[data-quick-add]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var p = PRODUCTS.find(function (x) { return x.id === btn.getAttribute("data-quick-add"); });
+        Cart.add({ id: p.id, name: p.name, price: p.price, qty: 1, size: "N/A" });
+        showToast(p.name + " added to cart");
+        track("related product add", { productId: p.id, sourceProduct: currentProduct.id });
+      });
+    });
+  })();
+</script>
+</body>
+</html>
