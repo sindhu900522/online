@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adobe Launch & Target Demo Store</title>
+
+    <!-- 
+      1. ADOBE LAUNCH EMBED SCRIPT 
+      Replace the URL below with your actual Adobe Launch Header Embed Script URL.
+      Example: <script src="https://assets.adobedtm.com/your-launch-property-id.min.js" async></script>
+    -->
+    <script>
+      // Initialize Adobe / W3C Standard Data Layer before Launch loads
+      window.digitalData = {
+        page: {
+          pageName: "Home: E-commerce Demo",
+          category: { primaryCategory: "Retail" }
+        },
+        cart: {
+          items: []
+        },
+        user: {
+          userStatus: "Logged Out"
+        }
+      };
+
+      // Alternative: Event-driven Adobe Client Data Layer (ACDL) initialization
+      window.adobeDataLayer = window.adobeDataLayer || [];
+    </script>
+
+    <style>
+        * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f4f4f9; padding: 20px; }
+        header { display: flex; justify-content: space-between; align-items: center; background: #222; color: #fff; padding: 15px 30px; border-radius: 8px; margin-bottom: 20px; }
+        header h1 { font-size: 20px; }
+        .cart-btn { background: #ff9900; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        /* Target Container Offer Placement */
+        #target-hero-banner { width: 100%; min-height: 80px; background: #e0e0e0; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border-radius: 8px; color: #555; }
+        
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .product-card { background: white; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .product-card img { max-width: 100%; height: 150px; object-fit: contain; border-radius: 4px; }
+        .product-card h3 { margin: 10px 0; font-size: 16px; }
+        .product-card .price { color: #2a8703; font-weight: bold; font-size: 18px; margin-bottom: 10px; }
+        .btn-group { display: flex; gap: 8px; justify-content: center; }
+        .btn { border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .btn-add { background: #0073e6; color: white; }
+        .btn-view { background: #eee; color: #333; }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 8px; max-width: 400px; width: 100%; text-align: center; position: relative; }
+        .close-btn { position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 20px; }
+        
+        /* Cart Drawer */
+        .cart-drawer { display: none; position: fixed; right: 0; top: 0; width: 300px; height: 100%; background: white; box-shadow: -2px 0 10px rgba(0,0,0,0.2); padding: 20px; z-index: 100; overflow-y: auto; }
+        .cart-drawer h2 { margin-bottom: 15px; }
+        .cart-item { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Demo Retail Store</h1>
+        <button class="cart-btn" onclick="toggleCart()">Cart (<span id="cart-count">0</span>)</button>
+    </header>
+
+    <!-- Target Hero Banner Location (Mbox / Target Offer Placeholder) -->
+    <div id="target-hero-banner" class="mboxDefault">
+        <p><em>[Adobe Target Hero Offer Area - Default Content]</em></p>
+    </div>
+
+    <main>
+        <div class="product-grid" id="product-grid"></div>
+    </main>
+
+    <!-- Product View Modal -->
+    <div class="modal" id="product-modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <img id="modal-img" src="" alt="Product Image">
+            <h2 id="modal-title"></h2>
+            <p id="modal-price" class="price"></p>
+            <p id="modal-desc" style="color:#666; margin-bottom:15px;"></p>
+            <button id="modal-add-btn" class="btn btn-add">Add to Cart</button>
+        </div>
+    </div>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cart-drawer">
+        <span class="close-btn" onclick="toggleCart()">&times;</span>
+        <h2>Your Shopping Cart</h2>
+        <div id="cart-items"></div>
+        <hr style="margin: 15px 0;">
+        <p><strong>Total: $<span id="cart-total">0.00</span></strong></p>
+        <button class="btn btn-add" style="width: 100%; margin-top: 15px;" onclick="checkout()">Checkout</button>
+    </div>
+
+    <script>
+        // Sample Product Data
+        const products = [
+            { id: "P101", name: "Wireless Headphones", price: 99.99, category: "Electronics", image: "https://via.placeholder.com/150/0073e6/ffffff?text=Headphones", desc: "High-quality wireless noise-canceling headphones." },
+            { id: "P102", name: "Smart Fitness Watch", price: 149.99, category: "Electronics", image: "https://via.placeholder.com/150/ff9900/ffffff?text=Smartwatch", desc: "Track your fitness metrics, heart rate, and steps daily." },
+            { id: "P103", name: "Classic Leather Backpack", price: 79.50, category: "Accessories", image: "https://via.placeholder.com/150/333333/ffffff?text=Backpack", desc: "Durable and stylish genuine leather laptop backpack." },
+            { id: "P104", name: "Ergonomic Desk Chair", price: 199.00, category: "Furniture", image: "https://via.placeholder.com/150/2a8703/ffffff?text=Chair", desc: "Comfortable lumbar-support chair for long work hours." }
+        ];
+
+        let cart = [];
+
+        // Render Product Catalog
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <img src="${p.image}" alt="${p.name}">
+                    <h3>${p.name}</h3>
+                    <div class="price">$${p.price.toFixed(2)}</div>
+                    <div class="btn-group">
+                        <button class="btn btn-view" onclick="viewProduct('${p.id}')">Quick View</button>
+                        <button class="btn btn-add" onclick="addToCart('${p.id}')">Add to Cart</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- ADOBE EVENT TRACKING HELPERS ---
+        function pushToAdobeDataLayer(eventName, eventDetails) {
+            // Push to Event-driven Adobe Client Data Layer (ACDL)
+            if (window.adobeDataLayer) {
+                window.adobeDataLayer.push({
+                    event: eventName,
+                    eventInfo: eventDetails
+                });
+            }
+
+            // Fire Custom DOM Event (Can be captured via Direct Call or Custom Event Rule in Adobe Launch)
+            const customEvent = new CustomEvent(eventName, { detail: eventDetails });
+            window.dispatchEvent(customEvent);
+
+            console.log(`[Adobe Analytics / Target Event Triggered]: ${eventName}`, eventDetails);
+        }
+
+        // --- INTERACTIVE ACTIONS ---
+
+        // 1. Product Quick View (Fires Product View Event)
+        function viewProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            document.getElementById('modal-title').innerText = product.name;
+            document.getElementById('modal-price').innerText = `$${product.price.toFixed(2)}`;
+            document.getElementById('modal-img').src = product.image;
+            document.getElementById('modal-desc').innerText = product.desc;
+            document.getElementById('modal-add-btn').onclick = function() { addToCart(product.id); closeModal(); };
+            
+            document.getElementById('product-modal').style.display = 'flex';
+
+            // Push Event for Adobe Tag / Target Integration
+            pushToAdobeDataLayer('productView', {
+                productId: product.id,
+                productName: product.name,
+                price: product.price,
+                category: product.category
+            });
+
+            // Example: Triggering a target custom mbox call via adobe.target.getOffer if AT.js is loaded
+            if (typeof adobe !== "undefined" && adobe.target && typeof adobe.target.getOffer === "function") {
+                adobe.target.getOffer({
+                    "mbox": "product-view-mbox",
+                    "params": {
+                        "entity.id": product.id,
+                        "entity.categoryId": product.category
+                    },
+                    "success": function(offers) {
+                        adobe.target.applyOffer({ offer: offers });
+                    }
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('product-modal').style.display = 'none';
+        }
+
+        // 2. Add to Cart (Fires Cart Add Event)
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            cart.push(product);
+            updateCartUI();
+
+            // Update Global digitalData Object
+            window.digitalData.cart.items = cart;
+
+            // Push Add to Cart Event for Launch / Target
+            pushToAdobeDataLayer('addToCart', {
+                productId: product.id,
+                productName: product.name,
+                price: product.price,
+                cartTotal: cart.reduce((sum, item) => sum + item.price, 0)
+            });
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const container = document.getElementById('cart-items');
+            container.innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <span>${item.name}</span>
+                    <span>$${item.price.toFixed(2)}</span>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('cart-total').innerText = total.toFixed(2);
+        }
+
+        function toggleCart() {
+            const drawer = document.getElementById('cart-drawer');
+            drawer.style.display = drawer.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // 3. Checkout Action
+        function checkout() {
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+
+            const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
+
+            pushToAdobeDataLayer('purchaseComplete', {
+                orderId: "ORD-" + Math.floor(Math.random() * 1000000),
+                cartItems: cart,
+                revenue: cartTotal
+            });
+
+            alert(`Order Placed! Total: $${cartTotal.toFixed(2)}`);
+            cart = [];
+            updateCartUI();
+            toggleCart();
+        }
+
+        // Initialize Page
+        renderProducts();
+    </script>
+</body>
+</html>
