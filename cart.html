@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StrideWear — Cart</title>
+<link rel="stylesheet" href="css/style.css" />
+
+<!-- ADOBE LAUNCH EMBED CODE GOES HERE (see index.html for notes) -->
+
+</head>
+<body data-page-type="cart">
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo">Stride<span>Wear</span></div>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="product.html">Products</a>
+      <a href="cart.html" class="active">Cart</a>
+    </nav>
+    <div class="header-actions">
+      <a href="cart.html" class="cart-link" data-cta="cart-icon" data-cta-location="header">
+        🛒<span class="cart-badge" data-cart-count>0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="section-title"><h2>Your Cart</h2></div>
+
+  <div id="cartContent"></div>
+</main>
+
+<footer class="site-footer">
+  <p>© 2026 StrideWear Demo Store — built for Adobe Analytics / Target / Launch testing.</p>
+</footer>
+
+<!-- Checkout modal -->
+<div class="modal-overlay" id="checkoutModal">
+  <div class="modal-box">
+    <button class="modal-close">&times;</button>
+    <h3>Checkout</h3>
+    <form id="checkoutForm">
+      <div class="option-group">
+        <label class="group-label">Full Name</label>
+        <input type="text" required style="width:100%;padding:10px;border:1px solid #e4e4ef;border-radius:6px;" />
+      </div>
+      <div class="option-group">
+        <label class="group-label">Email</label>
+        <input type="email" required style="width:100%;padding:10px;border:1px solid #e4e4ef;border-radius:6px;" />
+      </div>
+      <div class="option-group">
+        <label class="group-label">Shipping Address</label>
+        <input type="text" required style="width:100%;padding:10px;border:1px solid #e4e4ef;border-radius:6px;" />
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" data-cta="place-order" data-cta-location="checkout-modal">Place Order</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/analytics.js"></script>
+<script src="js/app.js"></script>
+<script>
+  function renderCart() {
+    var items = Cart.get();
+    var content = document.getElementById("cartContent");
+
+    if (items.length === 0) {
+      content.innerHTML = '<div class="empty-cart"><p>Your cart is empty.</p><a href="index.html" class="btn btn-primary" data-cta="continue-shopping" data-cta-location="empty-cart">Continue Shopping</a></div>';
+      return;
+    }
+
+    var rows = items.map(function (item) {
+      return (
+        '<tr data-id="' + item.id + '" data-size="' + item.size + '">' +
+          '<td class="cart-item-name">' + item.name + '<br><small style="color:#6b6b80;">Size: ' + item.size + '</small></td>' +
+          '<td>' + money(item.price) + '</td>' +
+          '<td>' +
+            '<div class="qty-stepper">' +
+              '<button type="button" data-cart-minus>−</button>' +
+              '<input type="text" readonly value="' + item.qty + '" />' +
+              '<button type="button" data-cart-plus>+</button>' +
+            '</div>' +
+          '</td>' +
+          '<td>' + money(item.price * item.qty) + '</td>' +
+          '<td><button class="btn btn-outline btn-sm" data-cart-remove data-cta="remove-item" data-cta-location="cart-table">Remove</button></td>' +
+        '</tr>'
+      );
+    }).join("");
+
+    var subtotal = Cart.total();
+    var shipping = subtotal > 75 ? 0 : 6.99;
+    var discount = window._appliedPromo ? subtotal * 0.1 : 0;
+    var total = subtotal + shipping - discount;
+
+    content.innerHTML =
+      '<div class="cart-layout">' +
+        '<table class="cart-table"><thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>' +
+        '<div class="cart-summary">' +
+          '<div class="promo-row"><input type="text" placeholder="Promo code" id="promoInput" /><button class="btn btn-dark btn-sm" id="promoBtn">Apply</button></div>' +
+          '<div class="summary-row"><span>Subtotal</span><span>' + money(subtotal) + '</span></div>' +
+          '<div class="summary-row"><span>Shipping</span><span>' + (shipping === 0 ? "Free" : money(shipping)) + '</span></div>' +
+          (discount > 0 ? '<div class="summary-row"><span>Discount</span><span>-' + money(discount) + '</span></div>' : '') +
+          '<div class="summary-row total"><span>Total</span><span>' + money(total) + '</span></div>' +
+          '<button class="btn btn-primary btn-block" id="checkoutBtn" data-cta="begin-checkout" data-cta-location="cart-summary" style="margin-top:14px;">Proceed to Checkout</button>' +
+        '</div>' +
+      '</div>';
+
+    wireCartRowEvents();
+    document.getElementById("promoBtn").addEventListener("click", applyPromo);
+    document.getElementById("checkoutBtn").addEventListener("click", openCheckout);
+  }
+
+  function wireCartRowEvents() {
+    document.querySelectorAll(".cart-table tbody tr").forEach(function (row) {
+      var id = row.getAttribute("data-id");
+      var size = row.getAttribute("data-size");
+      var input = row.querySelector("input");
+
+      row.querySelector("[data-cart-minus]").addEventListener("click", function () {
+        var v = Math.max(0, parseInt(input.value, 10) - 1);
+        Cart.updateQty(id, size, v);
+        renderCart();
+      });
+      row.querySelector("[data-cart-plus]").addEventListener("click", function () {
+        var v = parseInt(input.value, 10) + 1;
+        Cart.updateQty(id, size, v);
+        renderCart();
+      });
+      row.querySelector("[data-cart-remove]").addEventListener("click", function () {
+        Cart.remove(id, size);
+        renderCart();
+      });
+    });
+  }
+
+  function applyPromo() {
+    var code = document.getElementById("promoInput").value.trim().toUpperCase();
+    if (code === "SAVE10") {
+      window._appliedPromo = true;
+      track("promo code applied", { code: code, success: true });
+      showToast("Promo applied: 10% off!");
+    } else {
+      track("promo code applied", { code: code, success: false });
+      showToast("Invalid promo code");
+    }
+    renderCart();
+  }
+
+  function openCheckout() {
+    track("checkout start", {
+      cartValue: Cart.total(),
+      itemCount: Cart.get().reduce(function (s, i) { return s + i.qty; }, 0)
+    });
+    document.getElementById("checkoutModal").classList.add("open");
+  }
+
+  document.querySelector("#checkoutModal .modal-close").addEventListener("click", function () {
+    document.getElementById("checkoutModal").classList.remove("open");
+    track("modal close", { modal: "checkout" });
+  });
+
+  document.getElementById("checkoutForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var orderTotal = Cart.total();
+    var orderId = "ORD-" + Date.now();
+
+    track("purchase", {
+      orderId: orderId,
+      revenue: orderTotal,
+      items: Cart.get()
+    });
+
+    document.getElementById("checkoutModal").classList.remove("open");
+    Cart.clear();
+    document.getElementById("cartContent").innerHTML =
+      '<div class="empty-cart"><h3>🎉 Order placed!</h3><p>Order ID: ' + orderId + '</p><a href="index.html" class="btn btn-primary" data-cta="continue-shopping" data-cta-location="order-confirmation">Continue Shopping</a></div>';
+  });
+
+  renderCart();
+</script>
+</body>
+</html>
